@@ -71,6 +71,10 @@ public class ByteUtil {
                     "F0F1F2F3F4F5F6F7F8F9FAFBFCFDFEFF").toCharArray();
 
     public static String byteArrayToHexString(byte[] bytes) {
+        if(bytes == null)
+        {
+            return "";
+        }
         final int len = bytes.length;
         final char[] chars = new char[len<<1];
         int hexIndex;

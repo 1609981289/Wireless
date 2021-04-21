@@ -4,6 +4,8 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.xie.Util.*;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,14 +18,22 @@ public class test extends JFrame {
     public static ArrayList<String> portNameList = null;
     public static SerialPort serialPort = null;
 
-    public static JTextField t_sendData = null;
-    public static JTextField t_getDate = null;
+    public static ArrayList<String> id = null;
 
+    public static JTextArea t_sendData = null;
+    public static JTextArea t_getDate = null;
+
+    public static JTextArea idText =null;
 
     public static JButton b_sendDate = null;
     public static JButton b_openPort = null;
     public static JButton b_closePort = null;
 
+    public static JScrollPane js = null;
+    public static JScrollPane idJs = null;
+
+    public static long prevTime = 0;
+    public static long currTime = 0;
 
     public test()
     {
@@ -45,9 +55,16 @@ public class test extends JFrame {
         comUtil = ComUtil.getComUtil();
         portNameList = comUtil.getPortNameList();
 
-        t_sendData = new JTextField();
-        t_getDate = new JTextField();
+        id = new ArrayList<>();
 
+        t_sendData = new JTextArea();
+        t_getDate = new JTextArea();
+
+        idText = new JTextArea();
+        idText.setEnabled(false);
+
+        js = new JScrollPane(t_getDate);
+        idJs = new JScrollPane(idText);
 
         b_sendDate = new JButton("发送");
         b_openPort = new JButton("打开串口");
@@ -64,13 +81,20 @@ public class test extends JFrame {
         t_sendData.setBounds(0,300,500,30);
         t_getDate.setBounds(0,150,500,100);
 
+        t_getDate.setLineWrap(true);
+        idJs.setBounds(120,20,350,120);
+        js.setBounds(0,150,480,120);
+
+        idText.setBounds(120,20,250,120);
+        idText.setLineWrap(true);
+
         b_sendDate.setBounds(230,350,60,60);
         b_openPort.setBounds(0,80,100,60);
         b_closePort.setBounds(0,80,100,60);
         //添加组件
+        container.add(idJs);
         container.add(t_sendData);
-        container.add(t_getDate);
-
+        container.add(js);
 
         container.add(b_openPort);
         container.add(b_sendDate);
@@ -86,6 +110,7 @@ public class test extends JFrame {
                 serialPort = comUtil.getSerialPort();
                 Thread thread = new Thread(runnable);
                 thread.start();
+                prevTime = System.currentTimeMillis();
                 b_openPort.setVisible(false);
                 b_closePort.setVisible(true);
             }
@@ -120,8 +145,26 @@ public class test extends JFrame {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                String msg = ByteUtil.byteArrayToHexString(comUtil.readFromPort());
-                t_getDate.setText(msg);
+                currTime = System.currentTimeMillis();
+                if(currTime - prevTime > 60*1000)
+                {
+                    id.clear();
+                    idText.setText("");
+                    prevTime = currTime;
+                }
+                String msg = comUtil.readFromPort().toString();
+                t_getDate.append(msg);
+                String idArray[] = msg.split("\n");
+                int i = 0;
+                for(i = 0;i<idArray.length;i++)
+                {
+                    if(!id.contains(comUtil.getDate(idArray[i]))&&!"".equals(idArray[i])&&idArray[i]!=null) {
+                        System.out.println("不存在");
+                        id.add(comUtil.getDate(idArray[i]));
+                        idText.append(comUtil.getDate(idArray[i]));
+                        idText.append("\n");
+                    }
+                }
             }
         }
     };

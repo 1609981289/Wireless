@@ -5,12 +5,19 @@ import com.fazecast.jSerialComm.SerialPort;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.Buffer;
 import java.util.ArrayList;
 
 @SuppressWarnings("all")
 public class ComUtil {
     private static SerialPort serialPort = null;
     private static ComUtil comUtil = null;
+
+    private final static String FRAMEHEADER = "A55A";
+    private final static String FRAMETAIL = "0D0A";
+    private static int frameLength = 0;
+    private static int bbc = 0;
+    private static int date[] = null;
 
     private ComUtil(){}
 
@@ -88,35 +95,120 @@ public class ComUtil {
         }
     }
 
-    public byte[] readFromPort()
+    public StringBuilder readFromPort()
     {
         InputStream is = null;
         byte[] buffer = null;
+        StringBuilder result = new StringBuilder();
+        result.append("");
+        if(!serialPort.isOpen())
+        {
+            return result;
+        }
         try
         {
             is = serialPort.getInputStream();
             int bufflenth = is.available();
-            while(bufflenth!=0)
-            {
+            while(bufflenth!=0) {
                 buffer = new byte[bufflenth];
                 is.read(buffer);
+                System.out.println("执行");
+                String msg = ByteUtil.byteArrayToHexString(buffer);
+
+                while(true)
+                {
+                    int i = 0;
+                    System.out.println(msg);
+                    for(i = 0;i<bufflenth-1;i++) {
+                        String fh = msg.substring(i,i+4);
+                        System.out.println(fh);
+                        if(FRAMEHEADER.equals(fh))
+                        {
+                            System.out.println("帧头正确");
+                            break;
+                        }else {
+                            System.out.println("帧头错误");
+                            return result;
+                        }
+                    }
+
+                    //执行到这里说明匹配成功了；
+                    frameLength = Integer.parseInt(msg.substring(i+4,i+8),16);
+                    System.out.println(frameLength);
+                    String ft = msg.substring(i+frameLength*2-4,i+frameLength*2);
+                    System.out.println(ft);
+                    if(FRAMETAIL.equals(ft))
+                    {
+                        System.out.println("帧尾正确");
+                    }else {
+                        System.out.println("帧尾错误");
+                        return result;
+                    }
+
+                    date = new int[frameLength-4];
+                    int j = 0;
+                    int l = 0;
+                    for(j = i+4;j<i+frameLength*2-6;j+=2,l++)
+                    {
+                        date[l] = Integer.parseInt(msg.substring(j,j+2),16);
+                    }
+
+                    int bbc = date[0];
+                    for(int k = 1;k< date.length;k++)
+                    {
+                        bbc ^= date[k];
+                    }
+
+                    if(bbc == Integer.parseInt(msg.substring(i+frameLength*2-6,i+frameLength*2-4),16))
+                    {
+                        System.out.println("BBC正确");
+                    }else
+                    {
+                        System.out.println("BBC错误");
+                        return result;
+                    }
+
+                    result.append(msg.substring(i,i+frameLength*2));
+                    //result.append(msg.substring(i+10,i+frameLength*2-6));
+                    result.append("\n");
+                    System.out.println(bufflenth * 2 - 1);
+                    if(bufflenth*2-i-frameLength*2>14)
+                    {
+                        msg = msg.substring(i+frameLength*2,bufflenth*2);
+                        bufflenth-=frameLength;
+                        System.out.println(bufflenth*2);
+                        System.out.println(msg);
+                    }else
+                    {
+                        break;
+                    }
+                }
                 bufflenth = is.available();
+                return result;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        if(buffer==null)
-        {
-            return "".getBytes();
-        }else
-        {
-            return buffer;
-        }
+        return result;
     }
 
     public SerialPort getSerialPort()
     {
         return serialPort;
+    }
+
+    public static String getDate(String msg)
+    {
+        if("".equals(msg))
+        {
+            return "";
+        }
+        int length = Integer.parseInt(msg.substring(4,8),16);
+        if(length>8)
+        {
+            return msg.substring(10,length*2-6);
+        }
+        return "";
     }
 }
