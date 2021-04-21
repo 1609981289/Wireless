@@ -41,7 +41,7 @@ public class ComUtil {
 
     public void openPort()
     {
-        serialPort = SerialPort.getCommPort("COM2");
+        serialPort = SerialPort.getCommPort("COM4");
         serialPort.setBaudRate(115200);
         serialPort.setNumDataBits(8);
         serialPort.setNumStopBits(SerialPort.ONE_STOP_BIT);
@@ -118,18 +118,23 @@ public class ComUtil {
                 while(true)
                 {
                     int i = 0;
+                    boolean isFail = true;
                     System.out.println(msg);
-                    for(i = 0;i<bufflenth-1;i++) {
+                    for(i = 0;i<bufflenth*2-10;i++) {
                         String fh = msg.substring(i,i+4);
                         System.out.println(fh);
                         if(FRAMEHEADER.equals(fh))
                         {
+                            isFail = false;
                             System.out.println("帧头正确");
                             break;
-                        }else {
-                            System.out.println("帧头错误");
-                            return result;
                         }
+                    }
+
+                    if(isFail)
+                    {
+                        System.out.println("帧头错误");
+                        return result;
                     }
 
                     //执行到这里说明匹配成功了；
@@ -172,7 +177,7 @@ public class ComUtil {
                     //result.append(msg.substring(i+10,i+frameLength*2-6));
                     result.append("\n");
                     System.out.println(bufflenth * 2 - 1);
-                    if(bufflenth*2-i-frameLength*2>14)
+                    if(bufflenth*2-i-frameLength*2>18   )
                     {
                         msg = msg.substring(i+frameLength*2,bufflenth*2);
                         bufflenth-=frameLength;
@@ -207,7 +212,7 @@ public class ComUtil {
         int length = Integer.parseInt(msg.substring(4,8),16);
         if(length>8)
         {
-            return msg.substring(10,length*2-6);
+            return msg.substring(14,length*2-12);
         }
         return "";
     }
