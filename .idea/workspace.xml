@@ -2,15 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bfff9ed0-5563-49b9-ba63-b9334cef4a6a" name="默认变更列表" comment="">
-      <change beforePath="$PROJECT_DIR$/out/production/串口通信Demo02/com/xie/Demo/test$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/串口通信Demo02/com/xie/Demo/test$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/串口通信Demo02/com/xie/Demo/test$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/串口通信Demo02/com/xie/Demo/test$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/串口通信Demo02/com/xie/Demo/test$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/串口通信Demo02/com/xie/Demo/test$3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/串口通信Demo02/com/xie/Demo/test$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/串口通信Demo02/com/xie/Demo/test$4.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/串口通信Demo02/com/xie/Demo/test.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/串口通信Demo02/com/xie/Demo/test.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/串口通信Demo02/com/xie/Util/ByteUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/串口通信Demo02/com/xie/Util/ByteUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/串口通信Demo02/com/xie/Util/ComUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/串口通信Demo02/com/xie/Util/ComUtil.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xie/Demo/test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xie/Demo/test.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/xie/Util/ByteUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xie/Util/ByteUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/xie/Util/ComUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/xie/Util/ComUtil.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
